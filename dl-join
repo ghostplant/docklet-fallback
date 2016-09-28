@@ -62,7 +62,7 @@ if [[ "${IP_DEV:-ovs-link}" == "ovs-link" ]]; then
 	
 	# ssh -p ${SSH_PORT:-22} -oStrictHostKeyChecking=no root@0.0.0.0 true
 	
-	if ! ip route 2>/dev/null | grep -e ovs-link -e 10.10.0.1 >/dev/null; then
+	if ! ip route 2>/dev/null | grep ovs-link | grep 10.10.0.1 >/dev/null; then
 		#iptables -F
 		#iptables -t nat -F
 		iptables -t nat -D POSTROUTING -s 10.0.3.0/24 ! -d 10.0.3.0/24 -j MASQUERADE >/dev/null 2>&1 || true

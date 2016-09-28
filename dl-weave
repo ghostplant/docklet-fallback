@@ -3,7 +3,7 @@
 DIR_NAME=$(dirname $0)
 CUR_DIR=$(pwd)
 
-if ! ip route 2>/dev/null | grep -e ovs-link -e 10.10.0.1 >/dev/null; then
+if ! ip route 2>/dev/null | grep ovs-link | grep 10.10.0.1 >/dev/null; then
 	${DIR_NAME}/dl-join
 fi
 
@@ -144,7 +144,7 @@ EOF
 	rsync -Ha /var/lib/docklet/global/users/${USER_NAME}/ssh_keys/id_rsa ${TARGET}/root/.ssh/id_rsa
 	rsync -Ha /var/lib/docklet/global/users/${USER_NAME}/ssh_keys/authorized_keys ${TARGET}/root/.ssh/authorized_keys
 	
-	lxc-start -d -n ${UUID} || lxc-start -F -n ${UUID}
+	! lxc-start -d -n ${UUID} && ! lxc-start -F -n ${UUID} && echo "Failed to start lxc, maybe caused by first installation of apparmor, please reboot system and try again!" >/dev/stderr && exit 1
 	ovs-vsctl add-port ovs-link ${UUID} tag=${NAT_ID} 2>/dev/null || true
 	echo ${NATADDR_NOMASK}
 
